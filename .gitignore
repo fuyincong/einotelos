@@ -8,6 +8,13 @@
 *.so
 *.dylib
 
+# Go build output in project root (e.g. go build ./lab02/chain/ -> ./chain)
+/case
+/chain
+/param
+/replace
+/single
+
 # Test binary, built with `go test -c`
 *.test
 

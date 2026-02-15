@@ -8,12 +8,13 @@ import (
 	"os"
 	"time"
 
-	"github.com/cloudwego/eino-ext/components/model/deepseek"
+	"github.com/cloudwego/eino-ext/components/model/openai"
 	"github.com/cloudwego/eino/schema"
+	"github.com/joho/godotenv"
 )
 
 // generateWithRetry 尝试多次调用 ChatModel 的 Generate 方法，直到成功或达到最大重试次数。
-func generateWithRetry(ctx context.Context, chatModel *deepseek.ChatModel, messages []*schema.Message, maxRetries int) (*schema.Message, error) {
+func generateWithRetry(ctx context.Context, chatModel *openai.ChatModel, messages []*schema.Message, maxRetries int) (*schema.Message, error) {
 	// 记录最后一次错误
 	var lastErr error
 
@@ -39,14 +40,14 @@ func generateWithRetry(ctx context.Context, chatModel *deepseek.ChatModel, messa
 }
 
 func main() {
+	_ = godotenv.Load()
 	ctx := context.Background()
 
-	// 创建 Deepseek ChatModel 实例
-	chatModel, err := deepseek.NewChatModel(ctx, &deepseek.ChatModelConfig{
-		APIKey:  os.Getenv("DEEPSEEK_API_KEY"),
-		Model:   "deepseek-chat",
-		BaseURL: "https://api.deepseek.com",
-		// 设置超时
+	// 创建智谱 GLM ChatModel 实例（从 .env 读 GLM_API_KEY）
+	chatModel, err := openai.NewChatModel(ctx, &openai.ChatModelConfig{
+		APIKey:  os.Getenv("GLM_API_KEY"),
+		Model:   "GLM-4.7",
+		BaseURL: "https://open.bigmodel.cn/api/coding/paas/v4",
 		Timeout: 30 * time.Second,
 	})
 	if err != nil {

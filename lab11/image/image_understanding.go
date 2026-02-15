@@ -7,22 +7,23 @@ import (
 	"os"
 
 	"github.com/NuyoahCh/einotelos/lab11/common"
-	"github.com/cloudwego/eino-ext/components/model/deepseek"
+	"github.com/cloudwego/eino-ext/components/model/openai"
 	"github.com/cloudwego/eino/components/model"
 	"github.com/cloudwego/eino/schema"
+	"github.com/joho/godotenv"
 )
 
 // ImageUnderstanding 演示如何使用 Eino 框架进行图像理解
 // 本示例展示了如何向 LLM 发送包含图像的消息，并获取对图像内容的理解和描述
 func main() {
+	_ = godotenv.Load()
 	ctx := context.Background()
 
-	// 创建支持多模态的 ChatModel 实例
-	// DeepSeek 支持图像理解功能
-	chatModel, err := deepseek.NewChatModel(ctx, &deepseek.ChatModelConfig{
-		APIKey:  os.Getenv("DEEPSEEK_API_KEY"),
-		Model:   "deepseek-chat", // 使用支持视觉的模型
-		BaseURL: "https://api.deepseek.com",
+	// 创建 ChatModel 实例（智谱 GLM，从 .env 读 GLM_API_KEY）
+	chatModel, err := openai.NewChatModel(ctx, &openai.ChatModelConfig{
+		APIKey:  os.Getenv("GLM_API_KEY"),
+		Model:   "GLM-4.7",
+		BaseURL: "https://open.bigmodel.cn/api/coding/paas/v4",
 	})
 	if err != nil {
 		log.Fatalf("创建 ChatModel 实例失败: %v", err)

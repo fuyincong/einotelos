@@ -7,21 +7,23 @@ import (
 	"os"
 
 	"github.com/NuyoahCh/einotelos/lab11/common"
-	"github.com/cloudwego/eino-ext/components/model/deepseek"
+	"github.com/cloudwego/eino-ext/components/model/openai"
 	"github.com/cloudwego/eino/components/model"
 	"github.com/cloudwego/eino/schema"
+	"github.com/joho/godotenv"
 )
 
 // MultimodalChat 演示图文混合的多模态对话
 // 在一次对话中可以同时包含文本、图像等多种类型的内容
 func main() {
+	_ = godotenv.Load()
 	ctx := context.Background()
 
-	// 创建 ChatModel 实例
-	chatModel, err := deepseek.NewChatModel(ctx, &deepseek.ChatModelConfig{
-		APIKey:  os.Getenv("DEEPSEEK_API_KEY"),
-		Model:   "deepseek-chat",
-		BaseURL: "https://api.deepseek.com",
+	// 创建 ChatModel 实例（智谱 GLM，从 .env 读 GLM_API_KEY）
+	chatModel, err := openai.NewChatModel(ctx, &openai.ChatModelConfig{
+		APIKey:  os.Getenv("GLM_API_KEY"),
+		Model:   "GLM-4.7",
+		BaseURL: "https://open.bigmodel.cn/api/coding/paas/v4",
 	})
 	if err != nil {
 		log.Fatalf("创建 ChatModel 实例失败: %v", err)

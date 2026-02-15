@@ -6,25 +6,23 @@ import (
 	"log"
 	"os"
 
-	"github.com/cloudwego/eino-ext/components/model/deepseek"
+	"github.com/cloudwego/eino-ext/components/model/openai"
 	"github.com/cloudwego/eino/schema"
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	// This is a placeholder for the chat quickstart application.
+	// 从项目根目录的 .env 加载环境变量
+	_ = godotenv.Load()
 
 	// 1. 创建上下文
 	ctx := context.Background()
 
-	// 2. 创建 ChatModel 实例
-	chatModel, err := deepseek.NewChatModel(ctx, &deepseek.ChatModelConfig{
-		// 提供火山 ARK 的 APIKey 模型名称的可选项
-		// APIKey: os.Getenv("ARK_API_KEY"),
-		// Model:  os.Getenv("ARK_MODEL_NAME"),
-		// 注：对于获取环境变量和配置 .env 文件都可以
-		APIKey:  os.Getenv("DEEPSEEK_API_KEY"), // 获取环境变量中的 APIKey 配置
-		Model:   "deepseek-chat",               // 指定使用的模型名称
-		BaseURL: "https://api.deepseek.com",    // 自选的 API 服务器地址
+	// 2. 创建 ChatModel 实例（智谱 GLM，OpenAI 兼容 API）
+	chatModel, err := openai.NewChatModel(ctx, &openai.ChatModelConfig{
+		APIKey:  os.Getenv("GLM_API_KEY"),
+		Model:   "GLM-4.7",
+		BaseURL: "https://open.bigmodel.cn/api/coding/paas/v4",
 	})
 	if err != nil {
 		log.Fatalf("创建 ChatModel 实例失败: %v", err)
@@ -32,8 +30,8 @@ func main() {
 
 	// 3. 准备发送聊天请求
 	messages := []*schema.Message{
-		schema.SystemMessage("你是一个知识渊博的篮球解说员"),            // 系统消息，设定对话背景
-		schema.UserMessage("你好，请介绍一下 Kobe Bryant 的职业生涯。"), // 用户消息，提出问题
+		schema.SystemMessage("你是一个知识渊博的篮球解说员"), // 系统消息，设定对话背景
+		schema.UserMessage("科比为什么被人叫做牢大？"),     // 用户消息，提出问题
 	}
 
 	// 4. 调用模型生成响应

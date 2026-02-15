@@ -5,12 +5,13 @@ import (
 	"log"
 	"os"
 
-	"github.com/cloudwego/eino-ext/components/model/deepseek"
+	"github.com/cloudwego/eino-ext/components/model/openai"
 	"github.com/cloudwego/eino/components/prompt"
 	"github.com/cloudwego/eino/components/tool"
 	"github.com/cloudwego/eino/components/tool/utils"
 	"github.com/cloudwego/eino/compose"
 	"github.com/cloudwego/eino/schema"
+	"github.com/joho/godotenv"
 )
 
 // 工具入参
@@ -31,6 +32,7 @@ type playerInfoResponse struct {
 }
 
 func main() {
+	_ = godotenv.Load()
 	ctx := context.Background()
 
 	// 1) 篮球主题：ChatTemplate
@@ -76,19 +78,18 @@ func main() {
 
 `
 
-	// 3) 创建 DeepSeek ChatModel（从环境变量取 key）
-	apiKey := os.Getenv("DEEPSEEK_API_KEY")
+	// 3) 从 .env 加载环境变量，创建智谱 GLM ChatModel
+	apiKey := os.Getenv("GLM_API_KEY")
 	if apiKey == "" {
-		log.Fatal("缺少环境变量 DEEPSEEK_API_KEY")
+		log.Fatal("缺少环境变量 GLM_API_KEY（可在项目根 .env 中配置）")
 	}
-
-	chatModel, err := deepseek.NewChatModel(ctx, &deepseek.ChatModelConfig{
-		APIKey:  os.Getenv("DEEPSEEK_API_KEY"), // 获取环境变量中的 APIKey 配置
-		Model:   "deepseek-chat",               // 指定使用的模型名称
-		BaseURL: "https://api.deepseek.com",    // 自选的 API 服务器地址
+	chatModel, err := openai.NewChatModel(ctx, &openai.ChatModelConfig{
+		APIKey:  os.Getenv("GLM_API_KEY"),
+		Model:   "GLM-4.7",
+		BaseURL: "https://open.bigmodel.cn/api/coding/paas/v4",
 	})
 	if err != nil {
-		log.Fatalf("创建 DeepSeek ChatModel 失败: %v", err)
+		log.Fatalf("创建 ChatModel 失败: %v", err)
 	}
 
 	// 4) 创建工具：player_info（示例 mock：实际接你们的用户系统即可）

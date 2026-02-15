@@ -12,9 +12,10 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/cloudwego/eino-ext/components/model/deepseek"
+	"github.com/cloudwego/eino-ext/components/model/openai"
 	"github.com/cloudwego/eino/components/model"
 	"github.com/cloudwego/eino/schema"
+	"github.com/joho/godotenv"
 )
 
 /*
@@ -107,27 +108,27 @@ func (LoggingCallback) OnEnd(ctx context.Context, out CallbackOutput, err error)
 // 4) WrappedChatModel：在 Generate 中应用 options + callbacks + retry/timeout
 // -----------------------------
 type WrappedChatModel struct {
-	inner     *deepseek.ChatModel
+	inner     *openai.ChatModel
 	modelName string
 	callbacks []ChatCallback
 }
 
-func NewWrappedDeepSeek(apiKey string, callbacks ...ChatCallback) (*WrappedChatModel, error) {
+func NewWrappedGLM(apiKey string, callbacks ...ChatCallback) (*WrappedChatModel, error) {
 	apiKey = strings.TrimSpace(apiKey)
 	if apiKey == "" {
-		return nil, errors.New("missing DEEPSEEK_API_KEY")
+		return nil, errors.New("missing GLM_API_KEY")
 	}
-	inner, err := deepseek.NewChatModel(context.Background(), &deepseek.ChatModelConfig{
+	inner, err := openai.NewChatModel(context.Background(), &openai.ChatModelConfig{
 		APIKey:  apiKey,
-		Model:   "deepseek-chat",
-		BaseURL: "https://api.deepseek.com",
+		Model:   "GLM-4.7",
+		BaseURL: "https://open.bigmodel.cn/api/coding/paas/v4",
 	})
 	if err != nil {
 		return nil, err
 	}
 	return &WrappedChatModel{
 		inner:     inner,
-		modelName: "deepseek-chat",
+		modelName: "GLM-4.7",
 		callbacks: callbacks,
 	}, nil
 }
@@ -278,8 +279,9 @@ func unsafePointer(v reflect.Value) unsafe.Pointer {
 // 6) main：运行 demo
 // -----------------------------
 func main() {
-	apiKey := os.Getenv("DEEPSEEK_API_KEY")
-	w, err := NewWrappedDeepSeek(apiKey, LoggingCallback{})
+	_ = godotenv.Load()
+	apiKey := os.Getenv("GLM_API_KEY")
+	w, err := NewWrappedGLM(apiKey, LoggingCallback{})
 	if err != nil {
 		log.Fatal(err)
 	}

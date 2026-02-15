@@ -7,21 +7,23 @@ import (
 	"os"
 
 	"github.com/NuyoahCh/einotelos/lab11/common"
-	"github.com/cloudwego/eino-ext/components/model/deepseek"
+	"github.com/cloudwego/eino-ext/components/model/openai"
 	"github.com/cloudwego/eino/components/model"
 	"github.com/cloudwego/eino/schema"
+	"github.com/joho/godotenv"
 )
 
 // VisionQA 演示视觉问答（Visual Question Answering）功能
 // 用户可以针对图像提出具体问题，模型会基于图像内容给出答案
 func main() {
+	_ = godotenv.Load()
 	ctx := context.Background()
 
-	// 创建支持视觉的 ChatModel
-	chatModel, err := deepseek.NewChatModel(ctx, &deepseek.ChatModelConfig{
-		APIKey:  os.Getenv("DEEPSEEK_API_KEY"),
-		Model:   "deepseek-chat",
-		BaseURL: "https://api.deepseek.com",
+	// 创建 ChatModel（智谱 GLM，从 .env 读 GLM_API_KEY）
+	chatModel, err := openai.NewChatModel(ctx, &openai.ChatModelConfig{
+		APIKey:  os.Getenv("GLM_API_KEY"),
+		Model:   "GLM-4.7",
+		BaseURL: "https://open.bigmodel.cn/api/coding/paas/v4",
 	})
 	if err != nil {
 		log.Fatalf("创建 ChatModel 实例失败: %v", err)

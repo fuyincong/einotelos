@@ -9,13 +9,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cloudwego/eino-ext/components/model/deepseek"
+	"github.com/cloudwego/eino-ext/components/model/openai"
 	"github.com/cloudwego/eino/schema"
+	"github.com/joho/godotenv"
 )
 
-// Translator 基于 Deepseek 的翻译助手
+// Translator 基于智谱 GLM 的翻译助手
 type Translator struct {
-	chatModel *deepseek.ChatModel
+	chatModel *openai.ChatModel
 }
 
 // TranslatorConfig 翻译器配置
@@ -27,16 +28,16 @@ type TranslatorConfig struct {
 	Retries  int
 }
 
-// NewTranslator 创建一个新的翻译器实例
+// NewTranslator 创建一个新的翻译器实例（智谱 GLM）
 func NewTranslator(cfg TranslatorConfig) (*Translator, error) {
 	if strings.TrimSpace(cfg.APIKey) == "" {
 		return nil, errors.New("missing api key")
 	}
 	if cfg.Model == "" {
-		cfg.Model = "deepseek-chat"
+		cfg.Model = "GLM-4.7"
 	}
 	if cfg.BaseURL == "" {
-		cfg.BaseURL = "https://api.deepseek.com"
+		cfg.BaseURL = "https://open.bigmodel.cn/api/coding/paas/v4"
 	}
 	if cfg.Timeout <= 0 {
 		cfg.Timeout = 30 * time.Second
@@ -45,8 +46,7 @@ func NewTranslator(cfg TranslatorConfig) (*Translator, error) {
 		cfg.Retries = 0
 	}
 
-	// 建模时可用 Background；真正超时控制在 Translate 时做
-	chatModel, err := deepseek.NewChatModel(context.Background(), &deepseek.ChatModelConfig{
+	chatModel, err := openai.NewChatModel(context.Background(), &openai.ChatModelConfig{
 		APIKey:  cfg.APIKey,
 		Model:   cfg.Model,
 		BaseURL: cfg.BaseURL,
@@ -106,11 +106,12 @@ func (t *Translator) Translate(ctx context.Context, text, targetLang string) (st
 }
 
 func main() {
-	apiKey := os.Getenv("DEEPSEEK_API_KEY")
+	_ = godotenv.Load()
+	apiKey := os.Getenv("GLM_API_KEY")
 	translator, err := NewTranslator(TranslatorConfig{
 		APIKey:  apiKey,
-		Model:   "deepseek-chat",
-		BaseURL: "https://api.deepseek.com",
+		Model:   "GLM-4.7",
+		BaseURL: "https://open.bigmodel.cn/api/coding/paas/v4",
 		Timeout: 30 * time.Second,
 		Retries: 2,
 	})

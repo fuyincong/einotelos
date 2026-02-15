@@ -7,11 +7,13 @@ import (
 	"os"
 	"time"
 
-	"github.com/cloudwego/eino-ext/components/model/deepseek"
+	"github.com/cloudwego/eino-ext/components/model/openai"
 	"github.com/cloudwego/eino/schema"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	_ = godotenv.Load()
 	ctx := context.Background()
 
 	// 示例1: 基础配置
@@ -29,10 +31,10 @@ func main() {
 
 // 基础配置示例
 func basicExample(ctx context.Context) {
-	chatModel, err := deepseek.NewChatModel(ctx, &deepseek.ChatModelConfig{
-		APIKey:  os.Getenv("DEEPSEEK_API_KEY"),
-		Model:   "deepseek-chat",
-		BaseURL: "https://api.deepseek.com",
+	chatModel, err := openai.NewChatModel(ctx, &openai.ChatModelConfig{
+		APIKey:  os.Getenv("GLM_API_KEY"),
+		Model:   "GLM-4.7",
+		BaseURL: "https://open.bigmodel.cn/api/coding/paas/v4",
 	})
 	if err != nil {
 		log.Fatalf("创建失败: %v", err)
@@ -54,24 +56,17 @@ func basicExample(ctx context.Context) {
 
 // 高级配置示例 - 精确控制输出
 func advancedExample(ctx context.Context) {
-	chatModel, err := deepseek.NewChatModel(ctx, &deepseek.ChatModelConfig{
-		// 基础配置
-		APIKey:  os.Getenv("DEEPSEEK_API_KEY"),
-		Model:   "deepseek-chat",
-		BaseURL: "https://api.deepseek.com",
+	chatModel, err := openai.NewChatModel(ctx, &openai.ChatModelConfig{
+		APIKey:  os.Getenv("GLM_API_KEY"),
+		Model:   "GLM-4.7",
+		BaseURL: "https://open.bigmodel.cn/api/coding/paas/v4",
 		Timeout: 30 * time.Second,
-
-		// 生成参数
-		Temperature: 0.7, // 控制输出随机性，范围 [0.0, 2.0]，越高越随机
-		TopP:        0.9, // 核采样参数，范围 [0.0, 1.0]，越低越聚焦
-		MaxTokens:   500, // 限制最大生成 token 数量，范围 [1, 8192]
-
-		// 停止序列 - 遇到这些文本时停止生成
-		Stop: []string{"\\n\\n", "总结:"},
-
-		// 惩罚参数 - 控制重复度
-		PresencePenalty:  0.6, // 存在惩罚，范围 [-2.0, 2.0]，正值增加新话题可能性
-		FrequencyPenalty: 0.5, // 频率惩罚，范围 [-2.0, 2.0]，正值减少重复词语
+		Temperature: floatPtr(0.7),
+		TopP:         floatPtr(0.9),
+		MaxTokens:    intPtr(500),
+		Stop:         []string{"\n\n", "总结:"},
+		PresencePenalty:  floatPtr(0.6),
+		FrequencyPenalty: floatPtr(0.5),
 	})
 	if err != nil {
 		log.Fatalf("创建失败: %v", err)
@@ -93,19 +88,15 @@ func advancedExample(ctx context.Context) {
 
 // 创意写作配置示例 - 高随机性
 func creativeExample(ctx context.Context) {
-	chatModel, err := deepseek.NewChatModel(ctx, &deepseek.ChatModelConfig{
-		APIKey:  os.Getenv("DEEPSEEK_API_KEY"),
-		Model:   "deepseek-chat",
-		BaseURL: "https://api.deepseek.com",
-
-		// 高温度设置，适合创意写作
-		Temperature: 1.2,  // 更高的随机性
-		TopP:        0.95, // 保留更多可能性
-		MaxTokens:   800,
-
-		// 减少重复惩罚，允许一定的重复（适合故事情节）
-		PresencePenalty:  0.3,
-		FrequencyPenalty: 0.3,
+	chatModel, err := openai.NewChatModel(ctx, &openai.ChatModelConfig{
+		APIKey:  os.Getenv("GLM_API_KEY"),
+		Model:   "GLM-4.7",
+		BaseURL: "https://open.bigmodel.cn/api/coding/paas/v4",
+		Temperature: floatPtr(1.2),
+		TopP:         floatPtr(0.95),
+		MaxTokens:    intPtr(800),
+		PresencePenalty:  floatPtr(0.3),
+		FrequencyPenalty: floatPtr(0.3),
 	})
 	if err != nil {
 		log.Fatalf("创建失败: %v", err)
@@ -124,6 +115,9 @@ func creativeExample(ctx context.Context) {
 	fmt.Printf("AI 响应: %s\\n", response.Content)
 	printTokenUsage(response)
 }
+
+func floatPtr(f float32) *float32 { return &f }
+func intPtr(i int) *int           { return &i }
 
 // 打印 Token 使用情况
 func printTokenUsage(response *schema.Message) {

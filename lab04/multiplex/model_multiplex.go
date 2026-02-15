@@ -6,9 +6,10 @@ import (
 	"log"
 	"os"
 
-	"github.com/cloudwego/eino-ext/components/model/deepseek"
+	"github.com/cloudwego/eino-ext/components/model/openai"
 	"github.com/cloudwego/eino/components/prompt"
 	"github.com/cloudwego/eino/schema"
+	"github.com/joho/godotenv"
 )
 
 // PromptTemplate 提示词模板管理
@@ -63,14 +64,15 @@ func (p *PromptTemplates) TechInterviewer(position, level string) prompt.ChatTem
 }
 
 func main() {
+	_ = godotenv.Load()
 	ctx := context.Background()
 	templates := &PromptTemplates{}
 
-	// 创建 ChatModel
-	chatModel, err := deepseek.NewChatModel(ctx, &deepseek.ChatModelConfig{
-		APIKey:  os.Getenv("DEEPSEEK_API_KEY"),
-		Model:   "deepseek-chat",
-		BaseURL: "https://api.deepseek.com",
+	// 创建 ChatModel（智谱 GLM，从 .env 读 GLM_API_KEY）
+	chatModel, err := openai.NewChatModel(ctx, &openai.ChatModelConfig{
+		APIKey:  os.Getenv("GLM_API_KEY"),
+		Model:   "GLM-4.7",
+		BaseURL: "https://open.bigmodel.cn/api/coding/paas/v4",
 	})
 	if err != nil {
 		log.Fatalf("创建模型失败: %v", err)

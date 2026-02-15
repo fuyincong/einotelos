@@ -6,12 +6,14 @@ import (
 	"log"
 	"os"
 
-	"github.com/cloudwego/eino-ext/components/model/deepseek"
+	"github.com/cloudwego/eino-ext/components/model/openai"
 	"github.com/cloudwego/eino/components/prompt"
 	"github.com/cloudwego/eino/schema"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	_ = godotenv.Load()
 	ctx := context.Background()
 
 	// 1. 创建 ChatTemplate
@@ -39,11 +41,11 @@ func main() {
 		fmt.Printf("%d. [%s] %s\\n", i+1, msg.Role, msg.Content)
 	}
 
-	// 5. 使用生成的消息调用模型
-	chatModel, err := deepseek.NewChatModel(ctx, &deepseek.ChatModelConfig{
-		APIKey:  os.Getenv("DEEPSEEK_API_KEY"),
-		Model:   "deepseek-chat",
-		BaseURL: "https://api.deepseek.com",
+	// 5. 使用生成的消息调用模型（智谱 GLM，从 .env 读 GLM_API_KEY）
+	chatModel, err := openai.NewChatModel(ctx, &openai.ChatModelConfig{
+		APIKey:  os.Getenv("GLM_API_KEY"),
+		Model:   "GLM-4.7",
+		BaseURL: "https://open.bigmodel.cn/api/coding/paas/v4",
 	})
 	if err != nil {
 		log.Fatalf("创建模型失败: %v", err)

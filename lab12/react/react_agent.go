@@ -7,22 +7,24 @@ import (
 	"os"
 	"strings"
 
-	"github.com/cloudwego/eino-ext/components/model/deepseek"
+	"github.com/cloudwego/eino-ext/components/model/openai"
 	"github.com/cloudwego/eino/components/model"
 	"github.com/cloudwego/eino/schema"
+	"github.com/joho/godotenv"
 )
 
 // ReActAgent 实现 ReAct（Reasoning + Acting）模式的智能体
 // ReAct 是一种让 LLM 交替进行推理（Reasoning）和行动（Acting）的方法
 // 通过这种方式，Agent 可以更好地解决复杂问题
 func main() {
+	_ = godotenv.Load()
 	ctx := context.Background()
 
-	// 创建 ChatModel 实例
-	chatModel, err := deepseek.NewChatModel(ctx, &deepseek.ChatModelConfig{
-		APIKey:  os.Getenv("DEEPSEEK_API_KEY"),
-		Model:   "deepseek-chat",
-		BaseURL: "https://api.deepseek.com",
+	// 创建 ChatModel 实例（智谱 GLM，从 .env 读 GLM_API_KEY）
+	chatModel, err := openai.NewChatModel(ctx, &openai.ChatModelConfig{
+		APIKey:  os.Getenv("GLM_API_KEY"),
+		Model:   "GLM-4.7",
+		BaseURL: "https://open.bigmodel.cn/api/coding/paas/v4",
 	})
 	if err != nil {
 		log.Fatalf("创建 ChatModel 实例失败: %v", err)
