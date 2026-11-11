@@ -9,7 +9,7 @@ import (
 	"github.com/cloudwego/eino/components/model"
 	"github.com/cloudwego/eino/schema"
 
-	"github.com/NuyoahCh/einotelos/einox/config"
+	"github.com/celanwang/einotelos/einox/config"
 )
 
 // ChatModel 封装的对话模型

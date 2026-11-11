@@ -11,7 +11,7 @@ import (
 	"github.com/cloudwego/eino/compose"
 	"github.com/cloudwego/eino/schema"
 
-	"github.com/NuyoahCh/einotelos/einox/model"
+	"github.com/celanwang/einotelos/einox/model"
 )
 
 // ChainBuilder Chain 构建器

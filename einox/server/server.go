@@ -13,10 +13,10 @@ import (
 	"github.com/cloudwego/eino/components/tool"
 	"github.com/cloudwego/eino/schema"
 
-	"github.com/NuyoahCh/einotelos/einox/config"
-	"github.com/NuyoahCh/einotelos/einox/model"
-	"github.com/NuyoahCh/einotelos/einox/rag"
-	"github.com/NuyoahCh/einotelos/einox/tools"
+	"github.com/celanwang/einotelos/einox/config"
+	"github.com/celanwang/einotelos/einox/model"
+	"github.com/celanwang/einotelos/einox/rag"
+	"github.com/celanwang/einotelos/einox/tools"
 )
 
 //go:embed static/*

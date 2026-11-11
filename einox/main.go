@@ -7,8 +7,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/NuyoahCh/einotelos/einox/config"
-	"github.com/NuyoahCh/einotelos/einox/server"
+	"github.com/celanwang/einotelos/einox/config"
+	"github.com/celanwang/einotelos/einox/server"
 )
 
 func main() {

@@ -10,7 +10,7 @@ import (
 	"github.com/cloudwego/eino/compose"
 	"github.com/cloudwego/eino/schema"
 
-	"github.com/NuyoahCh/einotelos/einox/model"
+	"github.com/celanwang/einotelos/einox/model"
 )
 
 // GraphBuilder Graph 构建器
